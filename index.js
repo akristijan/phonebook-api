@@ -1,5 +1,8 @@
 const express = require('express')
 const app = express();
+
+app.use(express.json())
+
 const PORT = 3001
 
 
@@ -43,5 +46,42 @@ app.get('/api/persons/:id', (req, res) => {
      
      const personID = Number(req.params.id) // get id from url
      const person = phoneBook.find(person => person.id === personID) // get person by id from phonebook 
-     res.json( person) 
+     if(person) {
+        res.json( person) 
+     }
+    else {
+        res.status(404).end()
+    }
+})
+
+
+
+app.post('/api/persons', (req, res) => {
+    
+    const body = req.body
+    const name = phoneBook.some(person => Object.values(person).includes(body.name))
+    console.log(body.name)
+    console.log(name)
+    //The name or number is missing or The name already exists in the phonebook
+    if(!body.name || !body.number) {
+      
+       if(name) {
+          return res.status(400).json({ 
+          error: 'name or number missing or The name already exists in the phonebook' 
+          })
+        }
+       
+    }
+
+    const person = {
+        name: body.name,
+        number : body.number,
+        important: body.important || false,
+        date: new Date(),
+        id: Math.floor(Math.random() * 1000 + phoneBook.length)
+      }
+
+    phoneBook = phoneBook.concat(person)
+
+    res.json(person)
 })
