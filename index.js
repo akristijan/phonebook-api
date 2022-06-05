@@ -39,3 +39,9 @@ app.get('/info', (req, res) => {
     res.send(`<p>Phonebook has info for ${phoneBook.length} people</p> <p>${new Date()}</p>`)
 })
 
+app.get('/api/persons/:id', (req, res) => {
+     
+     const personID = Number(req.params.id) // get id from url
+     const person = phoneBook.find(person => person.id === personID) // get person by id from phonebook 
+     res.json( person) 
+})
