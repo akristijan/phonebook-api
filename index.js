@@ -1,14 +1,7 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express();
 
-app.use(express.json())
-
-const PORT = 3001
-
-
-app.listen(PORT, ()=> {
-    console.log(`Server  running on port ${PORT}`)
-})
 
 // hardcoded list of phonebook entries
 let phoneBook = [
@@ -34,6 +27,18 @@ let phoneBook = [
     }
 ]
 
+
+//MIDDLEWARE
+app.use(express.json())
+app.use(morgan('tiny'))
+const PORT = 3001
+
+
+app.listen(PORT, ()=> {
+    console.log(`Server  running on port ${PORT}`)
+})
+
+//route handlers
 app.get('/api/persons', (req, res) => {
     res.json(phoneBook)
 })
@@ -60,8 +65,7 @@ app.post('/api/persons', (req, res) => {
     
     const body = req.body
     const name = phoneBook.some(person => Object.values(person).includes(body.name))
-    console.log(body.name)
-    console.log(name)
+    
     //The name or number is missing or The name already exists in the phonebook
     if(!body.name) {      
           return res.status(400).json({ 
@@ -92,3 +96,10 @@ app.post('/api/persons', (req, res) => {
 
     res.json(person)
 })
+
+//middleware after our routes, that is used for catching requests made to non-existent routes
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
