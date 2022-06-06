@@ -63,22 +63,29 @@ app.post('/api/persons', (req, res) => {
     console.log(body.name)
     console.log(name)
     //The name or number is missing or The name already exists in the phonebook
-    if(!body.name || !body.number) {
-      
-       if(name) {
+    if(!body.name) {      
           return res.status(400).json({ 
-          error: 'name or number missing or The name already exists in the phonebook' 
-          })
-        }
-       
+          error: 'name missing' 
+          })      
+    }
+    else if(!body.number) {
+      return res.status(400).json({ 
+        error: 'Number missing' 
+        })    
+    }
+    else if(name) {
+      return res.status(400).json({ 
+        error: 'name already exist in DB' 
+        })    
     }
 
     const person = {
+        id: Math.floor(Math.random() * 1000 + phoneBook.length),
         name: body.name,
         number : body.number,
         important: body.important || false,
         date: new Date(),
-        id: Math.floor(Math.random() * 1000 + phoneBook.length)
+        
       }
 
     phoneBook = phoneBook.concat(person)
