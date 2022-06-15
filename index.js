@@ -4,7 +4,7 @@ const morgan = require('morgan')
 const app = express();
 
 //URL to DB
-const url = "mongodb+srv://kico:ljeto2022@cluster0.svfrbat.mongodb.net/?retryWrites=true&w=majority"
+const url = "x"
 let phoneBook = [{ 
   "id": 1,
   "name": "Arto Hellas", 
