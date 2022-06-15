@@ -1,31 +1,30 @@
 const express = require('express')
 const morgan = require('morgan')
+
 const app = express();
 
-
-// hardcoded list of phonebook entries
-let phoneBook = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+//URL to DB
+const url = "mongodb+srv://kico:ljeto2022@cluster0.svfrbat.mongodb.net/?retryWrites=true&w=majority"
+let phoneBook = [{ 
+  "id": 1,
+  "name": "Arto Hellas", 
+  "number": "040-123456"
+},
+{ 
+  "id": 2,
+  "name": "Ada Lovelace", 
+  "number": "39-44-5323523"
+},
+{ 
+  "id": 3,
+  "name": "Dan Abramov", 
+  "number": "12-43-234345"
+},
+{ 
+  "id": 4,
+  "name": "Mary Poppendieck", 
+  "number": "39-23-6423122"
+}]
 
 
 //MIDDLEWARE
@@ -34,7 +33,7 @@ app.use(morgan('tiny'))
 const PORT = 3001
 
 
-app.listen(PORT, ()=> {
+app.listen(process.env.PORT || PORT, ()=> {
     console.log(`Server  running on port ${PORT}`)
 })
 
@@ -59,7 +58,12 @@ app.get('/api/persons/:id', (req, res) => {
     }
 })
 
+app.delete('/api/persons/:id', (req, res) => {
+  const personID = Number(req.params.id);
+  phoneBook= phoneBook.filter(person => person.id !== personID)
+  res.status(204).end()
 
+})
 
 app.post('/api/persons', (req, res) => {
     
