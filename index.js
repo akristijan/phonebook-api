@@ -2,6 +2,17 @@ const express = require('express')
 const morgan = require('morgan')
 
 const app = express();
+const PORT = 3001
+
+//MIDDLEWARE
+app.use(express.json())
+app.use(morgan('tiny'))
+
+morgan.token('body',  (req, res) => {
+  return `${JSON.stringify(req.body)}`
+})
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 //URL to DB
 const url = "x"
@@ -27,10 +38,7 @@ let phoneBook = [{
 }]
 
 
-//MIDDLEWARE
-app.use(express.json())
-app.use(morgan('tiny'))
-const PORT = 3001
+
 
 
 app.listen(process.env.PORT || PORT, ()=> {
@@ -49,7 +57,7 @@ app.get('/info', (req, res) => {
 app.get('/api/persons/:id', (req, res) => {
      
      const personID = Number(req.params.id) // get id from url
-     const person = phoneBook.find(person => person.id === personID) // get person by id from phonebook 
+     const person = phoneBook.filter(person => person.id === personID) // get person by id from phonebook 
      if(person) {
         res.json( person) 
      }
@@ -72,18 +80,18 @@ app.post('/api/persons', (req, res) => {
     
     //The name or number is missing or The name already exists in the phonebook
     if(!body.name) {      
-          return res.status(400).json({ 
+          return res.status(418).json({ 
           error: 'name missing' 
           })      
     }
     else if(!body.number) {
-      return res.status(400).json({ 
+      return res.status(418).json({ 
         error: 'Number missing' 
         })    
     }
     else if(name) {
       return res.status(400).json({ 
-        error: 'name already exist in DB' 
+        error: 'Name already exist in DB' 
         })    
     }
 
@@ -96,7 +104,7 @@ app.post('/api/persons', (req, res) => {
         
       }
 
-    phoneBook = phoneBook.concat(person)
+    phoneBook.push(person)
 
     res.json(person)
 })
